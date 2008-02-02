@@ -1,0 +1,81 @@
+===============================
+DBI read verification extension
+===============================
+
+DB Informatics
+www.dbinformatics.com.au
+info@dbinformatics.com.au
+
+-------------------------------
+The DBI read verification extension allows selected content to be marked as
+"Read required" which is very useful on organisational intranets for example.
+Users can then be shown a listing of read required content that they have not
+yet read. Once they have read users can click "Mark as read" which removes it
+from their list.
+
+A 'Read verification' tab is added to the administration GUI which provides
+an interface for inspecting read required content. Read verifications can be
+inspected either by content or by user.  The object view is sortable by object
+class, objects name or modified date.
+-------------------------------
+
+License
+-------
+
+Certain parts of the SCK Add Subtree Notification rule extension were used as
+a base of this extension.
+
+Usage
+-----
+
+1. Put an attribute of type ezboolean ("Checkbox") in the content classes you
+   want to optionally enable read verifications on.
+
+2. Create a workflow containing an event of type "DBI add read verification"
+   and select the attributes you just added to the content classes.
+
+3. Create another workflow containing a multiplexer event and configure this
+   event to run the workflow you created for the desired classes.
+
+4. Put the multiplexer workflow you just created at the publish/after trigger.
+
+5. Run install/schema.sql to add the required read verification tables.
+
+6. Add a weekly cronjob to clean up data.
+20 5 * * 2 www-data cd /var/www/yoursite; /usr/bin/php runcronjobs.php -q readverificationcleanup 2>&1 > /dev/null
+
+Notes
+-----
+
+*  When a new object is published and its checkbox is checked, and the
+   workflow cronjob runs, then either a new verification will be created or an
+   existing verification will be reset for each user who can read the object.
+
+*  With the template fetch function verificationread/unread_objects you can
+   fetch all objects the current user needs to mark as been read. You'll find
+   an example of this function's usage in
+   design/standard/templates/readverification/unread_objects.tpl
+
+*  With the template fetch function verificationread/status you can get the
+   current verification status of a specific object for the current user. This
+   fetch function requires one parameter: object_id. The result is always an
+   integer:
+   - 0: the object needs to be marked as read
+   - 1: the object has already been marked as read
+   - 2: the object never had to be read at all
+
+*  If this status is 1, then you can use the content action handler supplied
+   with this extension to mark the object as read. For an example, take a look
+   at design/standard/templates/readverification/content_actionhandler.tpl and
+   include this template in node/view/full.tpl inside the form.
+
+*  You can use the module/view verificationread/object to list all users who
+   have read or still have to read a specific object. There's one required URL
+   parameter: object_id.
+
+*  You can use the module/view verificationread/user to list all objects a
+   specific user has read or still has to read. The URL parameters accepted
+   are: user_id (required), object_id (optional). When an object id is
+   specified, you will get detailed information about which versions the user
+   has verified as been read and the time he or she marked them.
+
