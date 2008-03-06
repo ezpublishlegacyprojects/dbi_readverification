@@ -2,6 +2,8 @@
 
 {let $status=fetch('readverification','status',hash('object_id', $node.contentobject_id ))}
 
+{cache-block keys=array( $current_user.contentobject_id, $status )}
+
 {switch match=$status}
 {case match=0}
 <input type="submit" class="button" name="VerifyAsReadButton" value="Mark as read" />
@@ -13,6 +15,8 @@ You have marked this object as read. <a href={concat("/readverification/user/", 
 
 {/case}
 {/switch}
+
+{/cache-block}
 
 {/let}
 
