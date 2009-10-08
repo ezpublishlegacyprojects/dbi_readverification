@@ -1,10 +1,10 @@
-{default $current_user			=	fetch( 'user', 'current_user' )i
+{default $current_user			=	fetch( 'user', 'current_user' )
 		 $policies				=	fetch( 'user', 'user_role', hash( 'user_id', $current_user.contentobject_id ) )
 		 $view_user_permission	=	false() }
 
 {let $status=fetch('readverification','status',hash('object_id', $node.contentobject_id ))}
 
-{cache-block keys=array( $current_user.contentobject_id, $status )}
+{cache-block keys=array( $current_user.contentobject_id, $node.contentobject_id, $status )}
 {foreach $policies as $policy}
 	{if and( eq( $policy.moduleName, 'readverification' ),
 			 eq( $policy.functionName, 'user_info' ) )}
